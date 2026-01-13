@@ -89,6 +89,26 @@ def extract_case_name(soup: BeautifulSoup) -> Optional[str]:
     return None
 
 
+def extract_short_case_name(soup: BeautifulSoup) -> Optional[str]:
+    """Extract the short case name from id='case-short-title'."""
+    short_title = soup.find(id='case-short-title')
+    if short_title:
+        return short_title.get_text(strip=True)
+    return None
+
+
+def extract_year_of_initiation(soup: BeautifulSoup) -> Optional[int]:
+    """Extract the year of initiation from id='case-year'."""
+    case_year = soup.find(id='case-year')
+    if case_year:
+        year_text = case_year.get_text(strip=True)
+        try:
+            return int(year_text)
+        except ValueError:
+            return None
+    return None
+
+
 def extract_field_from_section(soup: BeautifulSoup, section_id: str) -> Optional[str]:
     """
     Extract text content from a collapsible section by its ID.
@@ -147,6 +167,8 @@ def extract_unctad_metadata(html: str, case_id: int) -> Dict[str, Any]:
     result = {
         'unctad_case_id': case_id,
         'case_name': extract_case_name(soup),
+        'short_case_name': extract_short_case_name(soup),
+        'year_of_initiation': extract_year_of_initiation(soup),
         'italaw_link': extract_italaw_link(soup),
         'applicable_iia': None,
         'respondent_state': None,
