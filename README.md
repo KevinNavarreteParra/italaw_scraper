@@ -39,8 +39,5 @@ Then, you can run the scraper by executing the code in each Jupyter notebook in 
 There are a few things that could be improved in the future:
 
 - **Facilitate Usage**: The scraper currently works by running Jupyter notebooks sequentially. It would be better to have a single script that can be run from the command line to facilitate usage.
-- **Make the Scraper Nicer**: The current scraper implements a few bits of logic to avoid overloading the ITA Law website with requests. However, it could be made more robust by implementing a more sophisticated rate-limiting mechanism and error handling.
-- **Allow for More Flexible Scraping**: The current scraper is designed to scrape all known documents for all cases with a link in the UNCTAD dataset. However, now that the scraper is working and collected the data, it would be beneficial to allow for more flexible scraping options, such as scraping only specific cases or years of initiation. That way, users can easily update the dataset with new cases or documents without having to re-run the entire scraper.
-- **Work in a Way to Check for Updates**: It would be useful to implement a way to check if there are any updates to the ITA Law website and automatically scrape only the new data. In other words, if an arbitration has a new document added or if there is a new arbitration added, the scraper should be able to detect that and scrape only the new data without having to re-run the entire scraper.
 
 [^1]: At the time of writing, it is not clear what the date listed by ITA Law represents. It could be the date the document was added to the website, the date the document was filed at the relevant tribunal, or some other date. It's worth noting that not all documents have a corresponding date listed.
