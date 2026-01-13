@@ -245,13 +245,13 @@ def run_full_pipeline(args):
             for future in tqdm(as_completed(futures), total=len(futures), desc="  Converting"):
                 pass  # Results are printed by the function
 
-        print(f"  PNG conversion complete")
+        print("  PNG conversion complete")
 
     print("\n" + "="*60)
     print("PIPELINE COMPLETE")
     print("="*60)
-    print(f"  Document-level data: data/unctad_document_level_data.csv")
-    print(f"  Arbitration-level data: data/arbitration_level_document_metadata.csv")
+    print("  Document-level data: data/unctad_document_level_data.csv")
+    print("  Arbitration-level data: data/arbitration_level_document_metadata.csv")
     print(f"  PDFs: {DOCUMENTS_DIR}")
     print(f"  Images: {IMAGES_DIR}")
 
