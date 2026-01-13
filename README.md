@@ -24,15 +24,109 @@ The `data/` directory contains two salient files:
 
 The remaining files in the `data/` directory can be ignored for most purposes. They're typically intermediate files used in the scraping process. The only exception is the `download_results.json` file, which is a log of the download process, including any documents that failed to download. This file will be useful down the line to see which documents were not successfully downloaded and to retry those downloads if necessary.
 
-## Running the Scraper
+## Setup
 
-To run the scraper, you'll need to have Python installed along with the required libraries. You should be able to use the .venv file to set up a virtual environment with the necessary dependencies already installed. To do so, run the following command in the root directory of this repository:
+### Prerequisites
+
+- Python 3.9 or higher
+- [uv](https://docs.astral.sh/uv/) - A fast Python package manager
+
+### Installing uv
+
+If you don't have `uv` installed, you can install it with:
 
 ```bash
-source .venv/bin/activate  # On Windows use .venv\Scripts\activate
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via pip
+pip install uv
 ```
 
-Then, you can run the scraper by executing the code in each Jupyter notebook in the order they are listed in the root directory. The notebooks are designed to be run sequentially and automatically deposit the scraped data in the appropriate directories.
+### Setting Up the Project
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/KevinNavarreteParra/italaw_scraper.git
+cd italaw_scraper
+```
+
+2. **Create a virtual environment and install dependencies:**
+
+```bash
+uv venv
+```
+
+This creates a `.venv` directory with a fresh Python virtual environment.
+
+3. **Activate the virtual environment:**
+
+```bash
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
+
+# Windows (Command Prompt)
+.venv\Scripts\activate.bat
+```
+
+4. **Install dependencies:**
+
+```bash
+uv sync
+```
+
+This installs all required packages from `pyproject.toml`:
+- pandas
+- requests
+- tqdm
+- beautifulsoup4
+- pdf2image
+- pillow
+- seaborn
+- matplotlib
+- pymupdf
+
+### Additional System Dependency
+
+The `pdf2image` package requires `poppler` to be installed on your system:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install poppler-utils
+
+# Windows
+# Download from: https://github.com/osber/poppler-windows/releases
+# Add the bin/ folder to your PATH
+```
+
+## Running the Scraper
+
+Once setup is complete, you can run the full pipeline:
+
+```bash
+python main.py
+```
+
+Or with options:
+
+```bash
+python main.py --test           # Test mode (5 cases only)
+python main.py --incremental    # Only update with new documents
+python main.py --skip-download  # Skip PDF download step
+python main.py --skip-png       # Skip PNG conversion step
+```
+
+Alternatively, you can run the scraper by executing each Jupyter notebook in the `notebooks/` directory in numerical order. The notebooks are designed to be run sequentially and automatically deposit the scraped data in the appropriate directories.
 
 ## Configuration
 
