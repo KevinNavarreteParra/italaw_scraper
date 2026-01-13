@@ -70,7 +70,7 @@ This creates a `.venv` directory with a fresh Python virtual environment.
 source .venv/bin/activate
 
 # Windows (PowerShell)
-.venv\Scripts\Activate.ps1
+.venv\Scripts\activate.ps1
 
 # Windows (Command Prompt)
 .venv\Scripts\activate.bat
