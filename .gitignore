@@ -9,4 +9,4 @@ CLAUDE.md
 .venv
 .claude
 
-*/unctad_document_level_data.csv
+data/unctad_document_level_data.csv
