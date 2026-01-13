@@ -1,36 +1,118 @@
 import pandas as pd
 import requests
+import time
+import random
+from urllib.robotparser import RobotFileParser
+from urllib.parse import urlparse
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 from typing import Dict, Any, Optional
 
 
-def fetch_html_for_urls(df, url_col='url', html_col='html', timeout=10):
+DEFAULT_USER_AGENT = 'ItalawResearchBot/1.0 (academic research)'
+DEFAULT_DELAY_RANGE = (0.5, 1.5)
+
+
+def get_robots_parser(base_url: str, user_agent: str, timeout: int = 10) -> RobotFileParser:
+    """
+    Fetch and parse robots.txt for a given base URL.
+
+    Parameters:
+        base_url: The base URL (e.g., 'https://www.italaw.com')
+        user_agent: User agent string for the request
+        timeout: Request timeout in seconds
+
+    Returns:
+        RobotFileParser instance (will allow all if robots.txt not found)
+    """
+    rp = RobotFileParser()
+    robots_url = f"{base_url.rstrip('/')}/robots.txt"
+
+    try:
+        response = requests.get(robots_url, timeout=timeout, headers={'User-Agent': user_agent})
+        if response.status_code == 200:
+            rp.parse(response.text.splitlines())
+        else:
+            # No robots.txt or error - allow all by default
+            rp.parse([])
+    except requests.RequestException:
+        # Can't fetch robots.txt - allow all by default
+        rp.parse([])
+
+    return rp
+
+
+def is_url_allowed(url: str, robots_cache: dict, user_agent: str, timeout: int = 10) -> bool:
+    """
+    Check if a URL is allowed by the site's robots.txt.
+    Caches robots.txt parsers per domain to avoid repeated fetches.
+
+    Parameters:
+        url: The URL to check
+        robots_cache: Dict mapping base URLs to RobotFileParser instances
+        user_agent: User agent string
+        timeout: Request timeout for fetching robots.txt
+
+    Returns:
+        True if allowed, False if disallowed
+    """
+    parsed = urlparse(url)
+    base_url = f"{parsed.scheme}://{parsed.netloc}"
+
+    if base_url not in robots_cache:
+        robots_cache[base_url] = get_robots_parser(base_url, user_agent, timeout)
+
+    return robots_cache[base_url].can_fetch(user_agent, url)
+
+
+def fetch_html_for_urls(df, url_col='url', html_col='html', timeout=10,
+                        user_agent=DEFAULT_USER_AGENT,
+                        delay_range=DEFAULT_DELAY_RANGE,
+                        respect_robots=True):
     """
     Fetch HTML for each non-missing URL in the DataFrame.
-    
+
     Parameters:
         df (pd.DataFrame): The DataFrame containing the URLs.
         url_col (str): Name of the column with URLs.
         html_col (str): Name of the column where HTML content will be stored.
         timeout (int): Timeout for each request in seconds.
-    
+        user_agent (str): User agent string to identify the scraper.
+        delay_range (tuple): Min and max seconds to wait between requests.
+        respect_robots (bool): If True, check robots.txt before fetching.
+
     Returns:
         pd.DataFrame: DataFrame with an additional column for HTML.
     """
     # Initialize the HTML column with None
     df[html_col] = None
 
+    # Create a session for connection reuse
+    session = requests.Session()
+    session.headers.update({'User-Agent': user_agent})
+
+    # Cache for robots.txt parsers (one per domain)
+    robots_cache = {}
+
     for idx, row in tqdm(df.iterrows(), total=len(df), desc="Fetching HTML"):
         url = row[url_col]
         if pd.notna(url) and url != "Not available":
+            # Check robots.txt if enabled
+            if respect_robots and not is_url_allowed(url, robots_cache, user_agent, timeout):
+                print(f"Blocked by robots.txt: {url}")
+                df.at[idx, html_col] = None
+                continue
+
             try:
-                response = requests.get(url, timeout=timeout)
+                response = session.get(url, timeout=timeout)
                 response.raise_for_status()
                 df.at[idx, html_col] = response.text
             except requests.RequestException as e:
                 print(f"Failed to fetch {url}: {e}")
                 df.at[idx, html_col] = None
+
+            # Polite delay between requests
+            time.sleep(random.uniform(*delay_range))
         else:
             df.at[idx, html_col] = None
 
