@@ -49,8 +49,12 @@ from multiprocessing import cpu_count
 from tqdm import tqdm
 import pandas as pd
 
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import DOCUMENTS_DIR
+
 # Make sure the output folder exists
-os.makedirs("documents", exist_ok=True)
+os.makedirs(DOCUMENTS_DIR, exist_ok=True)
 
 def download_pdf(doc):
     doc_id = doc.get("doc_id")
@@ -59,7 +63,7 @@ def download_pdf(doc):
     if not doc_id or not url or pd.isna(url):
         return {"doc_id": doc_id, "status": "skipped - missing"}
 
-    filename = f"documents/{doc_id}.pdf"
+    filename = os.path.join(DOCUMENTS_DIR, f"{doc_id}.pdf")
 
     try:
         headers = {

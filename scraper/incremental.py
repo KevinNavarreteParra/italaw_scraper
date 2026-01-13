@@ -8,6 +8,10 @@ This module provides functions to:
 """
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import DOCUMENTS_DIR
+
 import pandas as pd
 from typing import Dict, List, Set, Tuple, Optional
 from tqdm import tqdm
@@ -324,17 +328,19 @@ def merge_updates(existing_df: pd.DataFrame,
     return df
 
 
-def get_missing_pdfs(df: pd.DataFrame, documents_dir: str = 'documents') -> pd.DataFrame:
+def get_missing_pdfs(df: pd.DataFrame, documents_dir: str = None) -> pd.DataFrame:
     """
     Filter to documents that don't have PDFs downloaded yet.
 
     Parameters:
         df: Document-level DataFrame
-        documents_dir: Directory where PDFs are stored
+        documents_dir: Directory where PDFs are stored (defaults to DOCUMENTS_DIR from config)
 
     Returns:
         DataFrame filtered to documents missing PDFs
     """
+    if documents_dir is None:
+        documents_dir = DOCUMENTS_DIR
     def pdf_exists(doc_id):
         if pd.isna(doc_id):
             return True  # Skip rows without doc_id
@@ -349,7 +355,7 @@ def run_incremental_update(existing_csv: str,
                            case_urls_df: pd.DataFrame,
                            output_csv: str = None,
                            delay_range: tuple = DEFAULT_DELAY_RANGE,
-                           documents_dir: str = 'documents') -> Dict:
+                           documents_dir: str = None) -> Dict:
     """
     Run a full incremental update.
 
@@ -358,13 +364,15 @@ def run_incremental_update(existing_csv: str,
         case_urls_df: DataFrame with case URLs to scrape
         output_csv: Path to save updated CSV (defaults to existing_csv)
         delay_range: Delay range between requests
-        documents_dir: Directory where PDFs are stored
+        documents_dir: Directory where PDFs are stored (defaults to DOCUMENTS_DIR from config)
 
     Returns:
         Summary dict with counts and list of documents needing download
     """
     if output_csv is None:
         output_csv = existing_csv
+    if documents_dir is None:
+        documents_dir = DOCUMENTS_DIR
 
     print("Loading existing data...")
     existing_df = load_existing_documents(existing_csv)

@@ -15,7 +15,7 @@ You can find the UNCTAD dataset I used in the `data/` directory of this reposito
 
 ## Data Format
 
-I've provided the data in a few useful formats. First, the `documents/` directory contains all the pdf documents scraped from ITA Law. Notice that each document name follows the format `year-of-initiation_case-name_document-name.pdf`. This way, all documents are easily identifiable by their case and document name. This also gets around any issues associated with arbitrations that have the same name but are from different years. This naming convention is also self-sorting, so you'll find that all documents are sorted by year and then alphabetically by case name and document name by default.
+I've provided the data in a few useful formats. First, PDFs and images are saved to a configurable location (see [Configuration](#configuration) below). Within that location, the `documents/` directory contains all the PDF documents scraped from ITA Law, and the `images/` directory contains PNG conversions of those PDFs. Notice that each document name follows the format `year-of-initiation_case-name_document-name.pdf`. This way, all documents are easily identifiable by their case and document name. This also gets around any issues associated with arbitrations that have the same name but are from different years. This naming convention is also self-sorting, so you'll find that all documents are sorted by year and then alphabetically by case name and document name by default.
 
 The `data/` directory contains two salient files:
 
@@ -34,10 +34,16 @@ source .venv/bin/activate  # On Windows use .venv\Scripts\activate
 
 Then, you can run the scraper by executing the code in each Jupyter notebook in the order they are listed in the root directory. The notebooks are designed to be run sequentially and automatically deposit the scraped data in the appropriate directories.
 
-## Future Work
+## Configuration
 
-There are a few things that could be improved in the future:
+The scraper saves PDF documents and PNG images to a location specified in `config.py`. By default, this is set to a Dropbox folder, but you can change it to any valid directory path.
 
-- **Facilitate Usage**: The scraper currently works by running Jupyter notebooks sequentially. It would be better to have a single script that can be run from the command line to facilitate usage.
+To configure the output location, edit `config.py` and set the `DROPBOX_ROOT` variable:
+
+```python
+DROPBOX_ROOT = '/path/to/your/output/directory'
+```
+
+The scraper will automatically create `documents/` and `images/` subdirectories within this path. The path is validated at import time to ensure it is a valid string.
 
 [^1]: At the time of writing, it is not clear what the date listed by ITA Law represents. It could be the date the document was added to the website, the date the document was filed at the relevant tribunal, or some other date. It's worth noting that not all documents have a corresponding date listed.

@@ -1,8 +1,11 @@
 import fitz
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import DOCUMENTS_DIR
 
 def get_adjusted_page_count(doc_id):
-    pdf_path = f"documents/{doc_id}.pdf"
+    pdf_path = os.path.join(DOCUMENTS_DIR, f"{doc_id}.pdf")
     if not os.path.exists(pdf_path):
         return None
 
@@ -17,7 +20,7 @@ def get_adjusted_page_count(doc_id):
         return None
 
 def get_page_count(doc_id):
-    pdf_path = f"documents/{doc_id}.pdf"
+    pdf_path = os.path.join(DOCUMENTS_DIR, f"{doc_id}.pdf")
     if not os.path.exists(pdf_path):
         return None
 
