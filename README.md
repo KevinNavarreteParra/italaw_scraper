@@ -105,8 +105,7 @@ brew install poppler
 sudo apt-get install poppler-utils
 
 # Windows
-# Download from: https://github.com/osber/poppler-windows/releases
-# Add the bin/ folder to your PATH
+choco install poppler
 ```
 
 ## Running the Scraper

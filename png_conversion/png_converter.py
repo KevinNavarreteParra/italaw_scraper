@@ -20,6 +20,7 @@ def convert_pdf_to_images(pdf_file, pdf_dir=None, output_dir=None):
     os.makedirs(output_folder, exist_ok=True)
 
     try:
+        # pages = convert_from_path(pdf_path, poppler_path="C:\\poppler\\Library\\bin")
         pages = convert_from_path(pdf_path)
         for i, page in enumerate(pages, start=1):
             page_number = f"{i:03}"
