@@ -1,0 +1,7 @@
+*.pdf
+*.png
+documents/
+images/
+cache/
+config.py
+.env
