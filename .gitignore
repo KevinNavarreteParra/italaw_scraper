@@ -8,3 +8,5 @@ config.py
 CLAUDE.md
 .venv
 .claude
+
+*/unctad_document_level_data.csv
