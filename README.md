@@ -24,6 +24,18 @@ The `data/` directory contains two salient files:
 
 The remaining files in the `data/` directory can be ignored for most purposes. They're typically intermediate files used in the scraping process. The only exception is the `download_results.json` file, which is a log of the download process, including any documents that failed to download. This file will be useful down the line to see which documents were not successfully downloaded and to retry those downloads if necessary.
 
+## On Unconverted Files
+
+Validate the files that weren't converted to PNG. I know there are at least 11 that could be converted but weren't. However there are around 5,000 files that have empty `images/` subfolders. This is more than likely the result of files whose title exists on ITA Law, but whose download link is unavailable. In other words, documents that aren't available to the public.
+
+TODO:
+
+- [ ] Parse the empty folders txt file that was uploaded to `data/`
+- [ ] Compare the names in that file to the files that are known to be unavailable
+- [ ] Convert any files that could be converted to PNG. I expect at least 11 of them to exist, but there might be a few dozen scattered about.
+
+In the grand scheme of things, I'm pretty certain that the subset of not converted documents is relatively small--functionally trivial. In that case, I don't have to worry terribly about this. Nevertheless, it'll be a good thing to verify because that process will also allow me to validate the PNG files I did convert--namely that they were converted correctly. It would probably be a good idea to develop some data validation code that begins by checking how many pages each PDF file has and then counting how many PNG files exist in the corresponding `images/` folder. If it's within some tolerance limit--say, three or five pages--then I can safely assume the conversion occurred as intended.
+
 ## Setup
 
 ### Prerequisites
