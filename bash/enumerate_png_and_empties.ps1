@@ -1,3 +1,7 @@
+# To execute without changing shell permissions run: 
+# powershell -ExecutionPolicy Bypass -File path\to\bash\enumerate_png_and_empties.ps1
+
+
 $RootPath = (Get-Location).Path
 $ParentPath = Split-Path $RootPath -Parent
 $OutputFile = Join-Path $ParentPath "empty_folders.txt"
